@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "strivo",
+    "name": "Strivo",
     "slug": "strivo",
+    "scheme": "strivo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,7 +25,9 @@
     "plugins": [
       "expo-router",
       "expo-status-bar",
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-font",
+      "expo-splash-screen"
     ]
   }
 }
