@@ -1,3 +1,3 @@
-export const NOTIFICATION_CHANNELS = {
+export const NOTIFICATIONS = {
   HABIT_REMINDERS: "habit-reminders",
 } as const;
