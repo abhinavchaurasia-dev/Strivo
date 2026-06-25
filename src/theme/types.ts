@@ -1,72 +1,63 @@
-export interface ColorTokens {
-  primary: string;
-  primaryLight: string;
-  primaryContainer: string;
-
-  secondary: string;
-
-  success: string;
-  warning: string;
-  error: string;
-  info: string;
-
-  background: string;
-  surface: string;
-  surfaceVariant: string;
-
-  border: string;
-  divider: string;
-
-  textPrimary: string;
-  textSecondary: string;
-  textDisabled: string;
-
-  overlay: string;
-}
+import type { ColorTokens } from "./tokens/colors";
+import type { SpacingTokens } from "./tokens/spacing";
+import type { RadiusTokens } from "./tokens/radius";
+import type { OpacityTokens } from "./tokens/opacity";
+import type { ZIndexTokens } from "./tokens/zIndex";
 
 export interface SemanticColors {
-  pageBackground: string;
+  background: {
+    page: string;
+    card: string;
+    surface: string;
+  };
 
-  cardBackground: string;
+  text: {
+    primary: string;
+    secondary: string;
+    disabled: string;
+  };
 
-  buttonPrimary: string;
-  buttonSecondary: string;
+  button: {
+    primary: {
+      background: string;
+      text: string;
+    };
 
-  inputBackground: string;
+    secondary: {
+      background: string;
+      text: string;
+    };
+  };
 
-  navigationBar: string;
+  input: {
+    background: string;
+    border: string;
+    placeholder: string;
+  };
 
-  divider: string;
+  divider: {
+    default: string;
+  };
 
-  successSurface: string;
-  warningSurface: string;
-  errorSurface: string;
+  navigation: {
+    background: string;
+    active: string;
+    inactive: string;
+  };
 
-  heroGradient: readonly [string, string];
-}
+  feedback: {
+    success: string;
+    warning: string;
+    error: string;
+  };
 
-export interface SpacingTokens {
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
-  "3xl": number;
-  "4xl": number;
-  "5xl": number;
-  "6xl": number;
-}
+  overlay: {
+    default: string;
+  };
 
-export interface RadiusTokens {
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
-
-  pill: number;
+  hero: {
+    gradient: readonly [string, string];
+  };
 }
 
 export interface ShadowStyle {
@@ -93,11 +84,45 @@ export interface ShadowTokens {
 }
 
 export interface MotionTokens {
-  quick: number;
-  normal: number;
-  slow: number;
+  duration: {
+    instant: number;
 
-  spring: object;
+    fast: number;
+
+    normal: number;
+
+    medium: number;
+
+    slow: number;
+  };
+
+  easing: {
+    easeOut: string;
+
+    easeIn: string;
+
+    easeInOut: string;
+
+    spring: string;
+  };
+
+  screen: {
+    push: number;
+
+    modal: number;
+
+    bottomSheet: number;
+  };
+
+  component: {
+    snackbar: number;
+
+    fab: number;
+
+    card: number;
+
+    button: number;
+  };
 }
 
 export interface TextStyleToken {
@@ -126,20 +151,6 @@ export interface TypographyTokens {
   caption: TextStyleToken;
 
   label: TextStyleToken;
-}
-
-export interface ZIndexTokens {
-  base: number;
-
-  card: number;
-
-  fab: number;
-
-  snackbar: number;
-
-  modal: number;
-
-  tooltip: number;
 }
 
 export interface Theme {

@@ -5,11 +5,14 @@ export * from "./tokens/radius";
 export * from "./tokens/typography";
 export * from "./tokens/shadows";
 export * from "./tokens/motion";
+export * from "./tokens/opacity";
+export * from "./tokens/zIndex";
 
 // Theme
 export * from "./types";
 
-// Semantic themes
-export * from "./semantic/light";
-export * from "./semantic/dark";
+// Semantic Themes
+export { lightTheme } from "./semantic/light";
+export { darkTheme } from "./semantic/dark";
+
 

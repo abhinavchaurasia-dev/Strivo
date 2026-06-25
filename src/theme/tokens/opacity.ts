@@ -1,22 +1,22 @@
 /**
  * ------------------------------------------------------------------
  * Strivo Design Tokens
- * Z-Index
+ * Opacity
  * ------------------------------------------------------------------
  */
 
-export const zIndex = {
-  base: 0,
+export const opacity = {
+  disabled: 0.38,
 
-  card: 10,
+  medium: 0.6,
 
-  fab: 100,
+  high: 0.87,
 
-  snackbar: 200,
+  overlay: 0.5,
 
-  modal: 500,
+  pressed: 0.12,
 
-  tooltip: 600,
+  hover: 0.08,
 } as const;
 
-export type ZIndexTokens = typeof zIndex;
+export type OpacityTokens = typeof opacity;
