@@ -7,3 +7,5 @@ export { default as Button } from "./Button";
 export { default as Surface } from "./Surface";
 
 export { default as Divider } from "./Divider";
+
+export { default as Card } from "./Card";

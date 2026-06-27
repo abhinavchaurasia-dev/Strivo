@@ -38,8 +38,8 @@ export default function Text({
 
   const styles = createStyles(theme);
 
-  const typography = theme.typography[variant];
-
+  const typography = theme.typography[variant] ?? theme.typography.bodyMedium;
+  
   return (
     <RNText
       testID={testID}

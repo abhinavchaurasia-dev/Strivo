@@ -12,6 +12,7 @@ export const lightTheme: SemanticColors = {
     primary: colors.textPrimary,
     secondary: colors.textSecondary,
     disabled: colors.textDisabled,
+    inverse: "#FFFFFF",
   },
 
   button: {

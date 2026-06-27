@@ -12,6 +12,7 @@ export const darkTheme: SemanticColors = {
     primary: "#F8FAFC",
     secondary: "#CBD5E1",
     disabled: "#94A3B8",
+    inverse: "#FFFFFF",
   },
 
   button: {

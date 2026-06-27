@@ -12,7 +12,8 @@ export type TextColor =
   | "success"
   | "warning"
   | "error"
-  | "inherit";
+  | "inherit"
+  | "inverse";
 
 export type FontWeightOverride = "regular" | "medium" | "semibold" | "bold";
 

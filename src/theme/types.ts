@@ -15,6 +15,7 @@ export interface SemanticColors {
     primary: string;
     secondary: string;
     disabled: string;
+    inverse: string;
   };
 
   button: {

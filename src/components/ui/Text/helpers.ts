@@ -20,6 +20,9 @@ export function resolveTextColor(theme: Theme, color: TextColor) {
     case "error":
       return theme.semantic.feedback.error;
 
+    case "inverse":
+      return "#FFFFFF";
+
     case "inherit":
       return undefined;
 

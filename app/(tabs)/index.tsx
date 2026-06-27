@@ -1,15 +1,5 @@
-import { View, Text } from "react-native";
+import TodayScreen from "@/screens/Today";
 
 export default function Screen() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Placeholder</Text>
-    </View>
-  );
+  return <TodayScreen />;
 }
