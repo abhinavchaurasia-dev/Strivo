@@ -6,16 +6,14 @@ export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flexDirection: "row",
-
-      justifyContent: "space-between",
-
       alignItems: "center",
-
-      marginBottom: theme.spacing.xl,
+      justifyContent: "space-between",
+      marginBottom: theme.spacing["2xl"],
     },
 
-    left: {
+    content: {
       flex: 1,
+      paddingRight: theme.spacing.lg,
     },
 
     greeting: {
@@ -24,13 +22,10 @@ export const createStyles = (theme: Theme) =>
 
     notificationButton: {
       width: 48,
-
       height: 48,
-
-      borderRadius: 24,
+      borderRadius: theme.radius.pill,
 
       justifyContent: "center",
-
       alignItems: "center",
 
       backgroundColor: theme.semantic.background.card,
@@ -38,18 +33,25 @@ export const createStyles = (theme: Theme) =>
       ...theme.shadows.sm,
     },
 
+    notificationButtonPressed: {
+      opacity: 0.8,
+    },
+
     badge: {
       position: "absolute",
 
-      right: 12,
+      top: 8,
+      right: 8,
 
-      top: 12,
+      minWidth: 16,
+      height: 16,
 
-      width: 8,
+      borderRadius: theme.radius.pill,
 
-      height: 8,
+      paddingHorizontal: 4,
 
-      borderRadius: 4,
+      alignItems: "center",
+      justifyContent: "center",
 
       backgroundColor: theme.semantic.feedback.error,
     },

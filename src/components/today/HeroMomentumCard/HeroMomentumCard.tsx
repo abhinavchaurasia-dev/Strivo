@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Image, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -7,36 +7,33 @@ import { Assets } from "@/constants/assets";
 import { useTheme } from "@/providers";
 
 import { createStyles } from "./styles";
-import type { HeroCardProps } from "./types";
+import type { HeroMomentumCardProps } from "./types";
 
-export default function HeroCard({
-  streak,
-  longestHabit,
-  completionRate,
+function HeroMomentumCard({
   userName,
+  currentStreak,
+  longestHabit,
+  completionPercentage,
   testID,
-}: HeroCardProps) {
+}: HeroMomentumCardProps) {
   const theme = useTheme();
   const styles = createStyles(theme);
+
+  const progress = Math.max(0, Math.min(100, completionPercentage));
 
   return (
     <LinearGradient
       testID={testID}
-      colors={["#FF9838", "#FF6B00"]}
+      colors={theme.semantic.hero.gradient}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
+      accessible
+      accessibilityRole="summary"
+      accessibilityLabel={`${currentStreak} day streak. ${completionPercentage}% completed today. Longest habit ${longestHabit}.`}
     >
-      {/* TODO(UI-ASSET)
-          Replace with:
-          assets/hero/hero-wave.svg
-      */}
       <Image source={Assets.hero.wave} style={styles.wave} resizeMode="cover" />
 
-      {/* TODO(UI-ASSET)
-          Replace with:
-          assets/hero/hero-glow.png
-      */}
       <Image
         source={Assets.hero.glow}
         style={styles.glow}
@@ -44,48 +41,154 @@ export default function HeroCard({
       />
 
       <View style={styles.content}>
-        <View style={styles.left}>
-          <View style={styles.badge}>
-            <Text variant="headlineMedium" color="inverse">
-              🔥
+        <View style={styles.leftColumn}>
+          <View style={styles.streakRow}>
+            <View style={styles.streakBlock}>
+              <Text
+                variant="displayLarge"
+                weight="bold"
+                color="inverse"
+                allowFontScaling={false}
+              >
+                {currentStreak}
+              </Text>
+
+              <View style={styles.streakMeta}>
+                <Text variant="titleMedium" weight="bold" color="inverse">
+                  day streak
+                </Text>
+
+                <Text
+                  variant="bodyMedium"
+                  color="inverse"
+                  style={styles.streakCaption}
+                >
+                  Consistency compounds.
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.liveBadge}>
+              <View style={styles.liveDot} />
+
+              <Text variant="caption" weight="bold" color="inverse">
+                LIVE
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.spacingLarge} />
+
+          <Text
+            variant="caption"
+            weight="bold"
+            color="inverse"
+            style={styles.sectionTitle}
+          >
+            LONGEST HABIT
+          </Text>
+
+          <Text
+            variant="headlineMedium"
+            weight="bold"
+            color="inverse"
+            numberOfLines={1}
+          >
+            💧 {longestHabit}
+          </Text>
+
+          <View style={styles.spacingMedium} />
+
+          <View style={styles.progressHeader}>
+            <Text variant="bodyMedium" color="inverse">
+              Today's Progress
+            </Text>
+
+            <Text variant="bodyMedium" weight="bold" color="inverse">
+              {progress}%
             </Text>
           </View>
 
-          <View style={styles.info}>
-            <Text variant="displayMedium" color="inverse" weight="bold">
-              {streak} Days
-            </Text>
+          <View style={styles.progressTrack}>
+            <View
+              style={[
+                styles.progressFill,
+                {
+                  width: `${progress}%`,
+                },
+              ]}
+            />
+          </View>
 
-            <Text variant="bodyLarge" color="inverse">
-              Current Streak
-            </Text>
+          <View style={styles.spacingMedium} />
+          <View style={styles.footer}>
+            <View style={styles.footerLeft}>
+              <Text
+                variant="bodyMedium"
+                color="inverse"
+                weight="medium"
+                numberOfLines={1}
+              >
+                Keep going, {userName} 🚀
+              </Text>
+
+              <Text
+                variant="caption"
+                color="inverse"
+                style={styles.footerCaption}
+                numberOfLines={1}
+              >
+                Every completed habit strengthens your momentum.
+              </Text>
+            </View>
+
+            <View style={styles.todayBadge}>
+              <Text
+                variant="caption"
+                color="inverse"
+                weight="bold"
+                allowFontScaling={false}
+              >
+                TODAY
+              </Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.divider} />
+        <View style={styles.rightColumn}>
+          <View style={styles.illustrationWrapper}>
+            <Image
+              source={Assets.hero.flame}
+              style={styles.flame}
+              resizeMode="contain"
+            />
 
-        <Text variant="headlineMedium" color="inverse" weight="semibold">
-          💧 {longestHabit}
-        </Text>
-
-        <Text variant="bodyMedium" color="inverse">
-          {completionRate}% completed today
-        </Text>
-
-        <Text variant="caption" color="inverse">
-          Keep going, {userName} 🚀
-        </Text>
+            <View style={styles.streakChip}>
+              <Text
+                variant="label"
+                color="inverse"
+                weight="bold"
+                allowFontScaling={false}
+              >
+                🔥 {currentStreak} DAYS
+              </Text>
+            </View>
+          </View>
+        </View>
       </View>
+      {/* Decorative depth layers */}
+      <View pointerEvents="none" style={styles.topHighlight} />
 
-      {/* TODO(UI-ASSET)
-          Replace with:
-          assets/hero/hero-flame.png
-      */}
+      <View pointerEvents="none" style={styles.bottomShadow} />
+
       <Image
-        source={Assets.hero.flame}
-        style={styles.flame}
+        source={Assets.hero.glow}
+        style={styles.secondaryGlow}
         resizeMode="contain"
       />
+
+      <View pointerEvents="none" style={styles.noiseOverlay} />
     </LinearGradient>
   );
 }
+export default memo(HeroMomentumCard);
