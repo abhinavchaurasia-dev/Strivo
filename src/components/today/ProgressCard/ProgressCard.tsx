@@ -47,7 +47,7 @@ function ProgressCard({
               styles.progressFill,
               {
                 width: `${completionPercentage}%`,
-                backgroundColor: theme.colors.primary[500],
+                backgroundColor: theme.colors.primary,
               },
             ]}
           />
