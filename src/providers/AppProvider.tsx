@@ -1,14 +1,20 @@
 // ─────────────────────────────────────────────
 // AppProvider
 // Single bootstrap layer that:
-//   1. Initialises the SQLite database
-//   2. Configures the foreground notification handler (module-level)
+//   1. Configures the foreground notification handler
+//   2. Initialises the SQLite database
 //   3. Creates the Android notification channel
 //   4. Hydrates the Zustand habit store
 //   5. Checks notification permissions
 //   6. Manages SplashScreen lifecycle
+//
 // The deep-link response listener is wired in app/_layout.tsx
 // because it requires the expo-router navigation context.
+//
+// IMPORTANT: configureNotificationHandler() is called inside bootstrap()
+// rather than at module level. This prevents the expo-notifications
+// module-load error (Expo Go / Android SDK 53+) from crashing the entire
+// import chain and making all routes appear to have no default export.
 // ─────────────────────────────────────────────
 
 import React, { type ReactNode, useEffect, useCallback, useState } from "react";
@@ -24,15 +30,10 @@ import {
 import { useHabitStore } from "@/store/habitStore";
 import { useSettingsStore } from "@/store/settingsStore";
 
-// ── Module-level bootstrap ─────────────────────────────────────────────
-// Must be called before any React tree renders so local notifications
-// display banners while the app is in the foreground.
-configureNotificationHandler();
-
 // ── SplashScreen ───────────────────────────────────────────────────────
 // Keep the splash visible until we finish bootstrapping.
 SplashScreen.preventAutoHideAsync().catch(() => {
-  // Already hidden — safe to ignore.
+  // Already hidden or not supported — safe to ignore.
 });
 
 interface AppProviderProps {
@@ -49,19 +50,26 @@ function BootstrapGate({ children }: AppProviderProps) {
 
   const bootstrap = useCallback(async () => {
     try {
-      // 1. Initialise SQLite — synchronous; creates tables & runs migrations.
+      // 1. Configure the foreground notification handler.
+      //    Wrapped inside try-catch so an Expo Go limitation
+      //    (expo-notifications throws on Android SDK 53+) can never
+      //    crash the bootstrap sequence.
+      configureNotificationHandler();
+
+      // 2. Initialise SQLite — synchronous; creates tables & runs migrations.
       getDatabase();
 
-      // 2. Android notification channel (no-op on iOS).
+      // 3. Android notification channel (no-op on iOS / Expo Go).
       await createAndroidChannel();
 
-      // 3. Hydrate the habit store from the DB so every screen starts with data.
+      // 4. Hydrate the habit store from the DB so every screen starts with data.
       loadHabits();
 
-      // 4. Sync permission status into the settings store.
+      // 5. Sync permission status into the settings store.
       await checkPermission();
     } catch (error) {
-      // Non-fatal — the app can still run; surfaces gracefully in Settings.
+      // Non-fatal — the app renders without full notification support.
+      // Users will see the permission banner in Settings to recover.
       console.warn("[AppProvider] Bootstrap error:", error);
     } finally {
       setReady(true);

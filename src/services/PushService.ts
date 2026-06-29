@@ -1,10 +1,12 @@
 // ─────────────────────────────────────────────
 // PushService
 // Push token registration and management.
-// Requires a development build (not Expo Go).
+//
+// Push notifications require a development build — they will NOT work
+// in Expo Go on Android (SDK 53+). All methods degrade gracefully
+// when expo-notifications is unavailable.
 // ─────────────────────────────────────────────
 
-import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import * as Clipboard from "expo-clipboard";
 import Constants from "expo-constants";
@@ -12,42 +14,53 @@ import { Platform } from "react-native";
 
 import { settingsRepository } from "@/repositories/SettingsRepository";
 
+// Safe runtime load — expo-notifications throws at import time in Expo Go.
+type ExpoNotifications = typeof import("expo-notifications");
+let N: ExpoNotifications | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  N = require("expo-notifications") as ExpoNotifications;
+} catch {
+  console.warn(
+    "[PushService] expo-notifications unavailable. " +
+      "Push registration requires a development build.",
+  );
+}
+
 export class PushService {
   /**
    * Registers the device for push notifications and stores the token.
    * Returns null if push is unavailable (simulator, Expo Go, no permission).
    */
   async registerForPushNotifications(): Promise<string | null> {
-    if (!Device.isDevice) {
-      console.warn(
-        "[PushService] Push notifications require a physical device.",
-      );
+    if (!N) {
+      console.warn("[PushService] expo-notifications not available.");
       return null;
     }
 
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
+    if (!Device.isDevice) {
+      console.warn("[PushService] Push notifications require a physical device.");
+      return null;
+    }
 
+    const { status: existingStatus } = await N.getPermissionsAsync();
     let finalStatus = existingStatus;
 
     if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-
+      const { status } = await N.requestPermissionsAsync();
       finalStatus = status;
     }
 
     if (finalStatus !== "granted") {
-      console.warn(
-        "[PushService] Permission not granted for push notifications.",
-      );
+      console.warn("[PushService] Permission not granted for push notifications.");
       return null;
     }
 
     // Android channel must exist before token registration.
     if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("habit-reminders", {
+      await N.setNotificationChannelAsync("habit-reminders", {
         name: "Habit Reminders",
-        importance: Notifications.AndroidImportance.HIGH,
+        importance: N.AndroidImportance.HIGH,
       });
     }
 
@@ -57,17 +70,10 @@ export class PushService {
         Constants.easConfig?.projectId;
 
       const token = projectId
-        ? (
-            await Notifications.getExpoPushTokenAsync({
-              projectId,
-            })
-          ).data
-        : (await Notifications.getExpoPushTokenAsync()).data;
+        ? (await N.getExpoPushTokenAsync({ projectId })).data
+        : (await N.getExpoPushTokenAsync()).data;
 
-      settingsRepository.patch({
-        pushToken: token,
-      });
-
+      settingsRepository.patch({ pushToken: token });
       return token;
     } catch (error) {
       console.error("[PushService] Failed to get push token:", error);
@@ -83,21 +89,14 @@ export class PushService {
   /** Copies the push token to the clipboard. */
   async copyTokenToClipboard(): Promise<boolean> {
     const token = this.getStoredToken();
-
-    if (!token) {
-      return false;
-    }
-
+    if (!token) return false;
     await Clipboard.setStringAsync(token);
-
     return true;
   }
 
   /** Clears the stored push token (e.g. on sign-out or reset). */
   clearToken(): void {
-    settingsRepository.patch({
-      pushToken: null,
-    });
+    settingsRepository.patch({ pushToken: null });
   }
 }
 
